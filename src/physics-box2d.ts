@@ -108,7 +108,7 @@ export class Box2dPhysics implements IPhysics {
     this.entities = [];
   }
 
-  createMarble(id: number, x: number, y: number): void {
+  createMarble(id: number, x: number, y: number, gravityScale: number = 1.0): void {
     const circleShape = new this.Box2D.b2CircleShape();
     circleShape.set_m_radius(0.25);
 
@@ -120,6 +120,7 @@ export class Box2dPhysics implements IPhysics {
     body.CreateFixture(circleShape, 1 + Math.random());
     body.SetAwake(false);
     body.SetEnabled(false);
+    body.SetGravityScale(gravityScale);
     this.marbleMap[id] = body;
   }
 
