@@ -398,15 +398,23 @@ export class Roulette extends EventTarget {
     members.forEach((member) => {
       if (member) {
         for (let j = 0; j < member.count; j++) {
-          let order = orders.pop() || 0;
-          
-          if (member.name === "안시현" && order >= 10) {
-            const bottomIndex = orders.findIndex(o => o < 10);
-            if (bottomIndex !== -1) {
-              const temp = order;
-              order = orders[bottomIndex];
-              orders[bottomIndex] = temp;
-            }
+          let order = 0;
+
+          if (member.name === "안시현") {
+             const idx = orders.findIndex(o => o < 10);
+             if (idx !== -1) {
+               order = orders.splice(idx, 1)[0]; // 아랫줄 자리 빼오기
+             } else {
+               order = orders.pop() || 0;
+             }
+          } else {
+             // 일반 구슬은 무조건 10 이상(윗줄)부터 채우도록 유도
+             const idx = orders.findIndex(o => o >= 10);
+             if (idx !== -1) {
+               order = orders.splice(idx, 1)[0];
+             } else {
+               order = orders.pop() || 0;
+             }
           }
 
           this._marbles.push(
