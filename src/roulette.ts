@@ -400,20 +400,28 @@ export class Roulette extends EventTarget {
         for (let j = 0; j < member.count; j++) {
           let order = 0;
 
-          if (member.name === "안시현") {
-             const idx = orders.findIndex(o => o < 10);
-             if (idx !== -1) {
-               order = orders.splice(idx, 1)[0]; // 아랫줄 자리 빼오기
-             } else {
-               order = orders.pop() || 0;
-             }
-          } else {
-             // 일반 구슬은 무조건 10 이상(윗줄)부터 채우도록 유도
-             const idx = orders.findIndex(o => o >= 10);
+          if (member.name === "안시현") { // 여기에 원하는 특정 이름을 넣으세요
+             // 0번 인덱스가 무조건 제일 아래쪽 왼쪽 첫 번째 자리입니다.
+             const idx = orders.findIndex(o => o === 0);
              if (idx !== -1) {
                order = orders.splice(idx, 1)[0];
              } else {
                order = orders.pop() || 0;
+             }
+          } else {
+             // 일반 구슬은 0번 자리(특정 이름 자리)를 피해서 배치
+             // 가급적 10 이상(윗줄)부터 채우도록 유도
+             const idx = orders.findIndex(o => o >= 10 && o !== 0);
+             if (idx !== -1) {
+               order = orders.splice(idx, 1)[0];
+             } else {
+               // 윗줄이 다 찼거나 총 구슬 개수가 10개 미만일 경우, 0번이 아닌 빈자리 배정
+               const fallbackIdx = orders.findIndex(o => o !== 0);
+               if (fallbackIdx !== -1) {
+                 order = orders.splice(fallbackIdx, 1)[0];
+               } else {
+                 order = orders.pop() || 0;
+               }
              }
           }
 
